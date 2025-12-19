@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>الدردشة</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121212">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: url("images/img.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    .box {
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      height: 100vh;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>غرفة الدردشة</h2>
+
+  <div id="messages"></div>
+
+  <input id="msg" placeholder="اكتب رسالة">
+  <button onclick="send()">إرسال</button>
+</div>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
+
+  const user = localStorage.getItem("user");
+  if (!user) location.href = "login.html";
+
+  const messagesDiv = document.getElementById("messages");
+  let messages = JSON.parse(localStorage.getItem("messages")) || [];
+
+  function render() {
+    messagesDiv.innerHTML = messages.map(m => `<p>${m}</p>`).join("");
+  }
+
+  function send() {
+    const msg = document.getElementById("msg").value;
+    if (!msg) return;
+    messages.push(user + ": " + msg);
+    localStorage.setItem("messages", JSON.stringify(messages));
+    document.getElementById("msg").value = "";
+    render();
+  }
+
+  render();
+</script>
+
+</body>
+    </html>
